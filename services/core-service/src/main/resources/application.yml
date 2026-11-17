@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: core-service
+  datasource:
+    url: ${CORE_DB_URL:jdbc:postgresql://localhost:5432/core}
+    username: ${CORE_DB_USERNAME:supplymind}
+    password: ${CORE_DB_PASSWORD:supplymind}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+core:
+  cors:
+    allowed-origins: ${CORE_CORS_ORIGINS:http://localhost:4200}

@@ -1,0 +1,10 @@
+package com.supplymind.aiops.knowledge;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface KnowledgeDocumentRepository extends JpaRepository<KnowledgeDocument, UUID> {
+
+    java.util.List<KnowledgeDocument> findAllByTenantId(String tenantId);
+}

@@ -1,0 +1,133 @@
+{
+  "realm": "supplymind",
+  "enabled": true,
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      { "name": "platform-admin", "description": "Platform Admin - README §2" },
+      { "name": "supply-chain-manager", "description": "Supply Chain Manager - README §2" },
+      { "name": "procurement-manager", "description": "Procurement Manager - README §2" },
+      { "name": "warehouse-manager", "description": "Warehouse Manager - README §2" },
+      { "name": "logistics-coordinator", "description": "Logistics Coordinator - README §2" },
+      { "name": "operations-analyst", "description": "Operations Analyst - README §2" },
+      { "name": "auditor", "description": "Auditor - README §2" },
+      { "name": "system-service", "description": "Service-to-service calls already gated by a human approval upstream (e.g. AI Operations Service executing an approved recommendation against Operations Service) - not a human role." }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "web",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4200"],
+      "protocolMappers": [
+        {
+          "name": "tenant-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenant_id",
+            "claim.name": "tenant_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "ai-operations-service",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "ai-ops-service-secret"
+    }
+  ],
+  "users": [
+    {
+      "username": "j.alvarez",
+      "enabled": true,
+      "email": "j.alvarez@example.com",
+      "firstName": "J.",
+      "lastName": "Alvarez",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["supply-chain-manager"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "admin.demo",
+      "enabled": true,
+      "email": "admin.demo@example.com",
+      "firstName": "Platform",
+      "lastName": "Admin",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["platform-admin"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "p.chen",
+      "enabled": true,
+      "email": "p.chen@example.com",
+      "firstName": "P.",
+      "lastName": "Chen",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["procurement-manager"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "w.taylor",
+      "enabled": true,
+      "email": "w.taylor@example.com",
+      "firstName": "W.",
+      "lastName": "Taylor",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["warehouse-manager"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "l.kim",
+      "enabled": true,
+      "email": "l.kim@example.com",
+      "firstName": "L.",
+      "lastName": "Kim",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["logistics-coordinator"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "a.patel",
+      "enabled": true,
+      "email": "a.patel@example.com",
+      "firstName": "A.",
+      "lastName": "Patel",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["operations-analyst"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "auditor.demo",
+      "enabled": true,
+      "email": "auditor.demo@example.com",
+      "firstName": "Audit",
+      "lastName": "Reviewer",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["auditor"],
+      "attributes": { "tenant_id": ["tenant-demo"] }
+    },
+    {
+      "username": "service-account-ai-operations-service",
+      "enabled": true,
+      "serviceAccountClientId": "ai-operations-service",
+      "realmRoles": ["system-service"]
+    }
+  ]
+}
