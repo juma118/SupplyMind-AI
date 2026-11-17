@@ -64,7 +64,7 @@ import { NewPurchaseOrderDialogComponent } from './new-purchase-order-dialog.com
         </ng-container>
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let po"><mat-chip>{{ po.status }}</mat-chip></td>
+          <td mat-cell *matCellDef="let po"><mat-chip [class]="statusClass(po.status)">{{ po.status }}</mat-chip></td>
         </ng-container>
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
@@ -122,6 +122,12 @@ export class ProcurementComponent implements OnInit {
 
   formatItems(po: PurchaseOrder): string {
     return po.items.map((i) => `${i.quantity}x ${i.productSku}`).join(', ');
+  }
+
+  statusClass(status: string): string {
+    if (status === 'RECEIVED') return 'risk-low';
+    if (status === 'DRAFT') return '';
+    return 'risk-medium';
   }
 
   submit(po: PurchaseOrder): void {

@@ -2,6 +2,7 @@ package com.supplymind.core.supplier;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -33,6 +34,8 @@ public class SupplierController {
         return SupplierDtos.SupplierPerformanceResponse.from(service.get(id));
     }
 
+    // PRODUCT_SPEC.md §3: Procurement Manager owns Suppliers.
+    @PreAuthorize("hasRole('procurement-manager') or hasRole('platform-admin')")
     @PostMapping
     public ResponseEntity<SupplierDtos.SupplierResponse> create(@Valid @RequestBody SupplierDtos.CreateSupplierRequest request) {
         Supplier created = service.create(request);

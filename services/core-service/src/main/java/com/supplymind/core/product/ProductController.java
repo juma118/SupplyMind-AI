@@ -3,6 +3,7 @@ package com.supplymind.core.product;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,6 +30,8 @@ public class ProductController {
         return ProductDtos.ProductResponse.from(service.get(id));
     }
 
+    // PRODUCT_SPEC.md §3: Warehouse Manager owns Products & Inventory.
+    @PreAuthorize("hasRole('warehouse-manager') or hasRole('platform-admin')")
     @PostMapping
     public ResponseEntity<ProductDtos.ProductResponse> create(@Valid @RequestBody ProductDtos.CreateProductRequest request) {
         Product created = service.create(request);
@@ -37,6 +40,7 @@ public class ProductController {
                 .body(body);
     }
 
+    @PreAuthorize("hasRole('warehouse-manager') or hasRole('platform-admin')")
     @PutMapping("/{id}")
     public ProductDtos.ProductResponse update(@PathVariable UUID id,
                                                @Valid @RequestBody ProductDtos.CreateProductRequest request) {

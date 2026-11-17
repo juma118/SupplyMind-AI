@@ -88,7 +88,8 @@ services:
         condition: service_healthy
     environment:
       CORE_DB_URL: jdbc:postgresql://postgres:5432/core
-      CORE_CORS_ORIGINS: http://localhost:4200
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/supplymind/protocol/openid-connect/certs
+      KEYCLOAK_ISSUER: http://localhost:8180/realms/supplymind
 
   operations-service:
     build: ./services/operations-service
@@ -99,7 +100,6 @@ services:
         condition: service_healthy
     environment:
       OPERATIONS_DB_URL: jdbc:postgresql://postgres:5432/operations
-      OPERATIONS_CORS_ORIGINS: http://localhost:4200
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/supplymind/protocol/openid-connect/certs
       KEYCLOAK_ISSUER: http://localhost:8180/realms/supplymind
 
@@ -113,7 +113,9 @@ services:
     environment:
       SHIPMENT_DB_URL: jdbc:postgresql://postgres:5432/shipment
       KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
-      SHIPMENT_CORS_ORIGINS: http://localhost:4200
+      # quarkus.oidc.auth-server-url/token.issuer are baked in at build time (see
+      # application.properties) rather than taken from env here - that property is
+      # resolved at `mvn package` time, not at container startup.
 
   ai-operations-service:
     build: ./services/ai-operations-service
@@ -131,7 +133,6 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
       CORE_SERVICE_BASE_URL: http://core-service:8081
       OPERATIONS_SERVICE_BASE_URL: http://operations-service:8082
-      AIOPS_CORS_ORIGINS: http://localhost:4200
       KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/supplymind/protocol/openid-connect/certs
       KEYCLOAK_ISSUER: http://localhost:8180/realms/supplymind
       # Browser-facing token endpoint works fine in-network too (Keycloak doesn't care

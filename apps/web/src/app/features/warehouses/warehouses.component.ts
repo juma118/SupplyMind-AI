@@ -49,6 +49,9 @@ interface WarehouseCard extends Warehouse {
     .error { color: #b3261e; }
     .warn { color: #b3261e; font-weight: 600; }
     .hint { color: rgba(0,0,0,0.6); }
+    mat-card { transition: box-shadow 0.15s ease, transform 0.15s ease; }
+    mat-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.12); transform: translateY(-2px); }
+    mat-card-title { font-size: 1.05rem; }
   `],
 })
 export class WarehousesComponent implements OnInit {

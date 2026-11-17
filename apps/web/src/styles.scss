@@ -1,4 +1,108 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Custom theme instead of the stock azure-blue prebuilt theme - deep indigo primary with
+// a violet accent, matched to the AI-gradient language below (PRODUCT_SPEC.md §4's
+// "dense, data-forward operations console" direction, with an agentic-AI visual identity
+// layered on top for the screens that are actually AI-driven).
+$supplymind-primary: mat.m2-define-palette(mat.$m2-indigo-palette, 700, 400, 900);
+$supplymind-accent: mat.m2-define-palette(mat.$m2-deep-purple-palette, 500, 300, 800);
+$supplymind-warn: mat.m2-define-palette(mat.$m2-red-palette, 600);
+
+$supplymind-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $supplymind-primary,
+    accent: $supplymind-accent,
+    warn: $supplymind-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: 'Inter, Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: 0,
+));
+
+@include mat.all-component-themes($supplymind-theme);
+
+:root {
+  --sm-bg: #f4f5f8;
+  --sm-surface: #ffffff;
+  --sm-border: rgba(15, 23, 42, 0.08);
+  --sm-text-secondary: rgba(15, 23, 42, 0.6);
+  --sm-radius: 12px;
+  --sm-risk-low-bg: #e3f3e6;
+  --sm-risk-low-fg: #1e7b34;
+  --sm-risk-medium-bg: #fff4cc;
+  --sm-risk-medium-fg: #8a6d00;
+  --sm-risk-high-bg: #fde8e6;
+  --sm-risk-high-fg: #b3261e;
+
+  // The AI visual language: every element that represents actual agent/model output
+  // (not deterministic business logic) uses this gradient, so "AI touched this" is a
+  // glance, not a read - mode badges, agent avatars, the AI nav icon, recommendation cards.
+  --sm-ai-grad: linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #06b6d4 100%);
+  --sm-ai-grad-soft: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(6, 182, 212, 0.12) 100%);
+  --sm-ai-badge-bg: #ede9fe;
+  --sm-ai-badge-fg: #5b21b6;
+  --sm-ai-online-bg: #ede9fe;
+  --sm-ai-online-fg: #6d28d9;
+  --sm-ai-offline-bg: #dbeafe;
+  --sm-ai-offline-fg: #1d4ed8;
+  --sm-ai-fallback-bg: #f1f5f9;
+  --sm-ai-fallback-fg: #475569;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Roboto, "Helvetica Neue", sans-serif;
+  background: var(--sm-bg);
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Shared card/table look so every list/detail screen reads as one system instead of
+// each component inventing its own spacing and corner radius.
+.mat-mdc-card, table.mat-mdc-table {
+  border-radius: var(--sm-radius) !important;
+  border: 1px solid var(--sm-border);
+}
+
+h2 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 1rem 0;
+}
+
+// Risk/status chip palette shared across Suppliers, Forecasting, Shipments, Procurement -
+// one set of class names instead of each screen redefining the same three colors.
+.risk-low, .chip-ok { background: var(--sm-risk-low-bg) !important; color: var(--sm-risk-low-fg) !important; }
+.risk-medium { background: var(--sm-risk-medium-bg) !important; color: var(--sm-risk-medium-fg) !important; }
+.risk-high, .chip-delayed { background: var(--sm-risk-high-bg) !important; color: var(--sm-risk-high-fg) !important; }
+
+// Gradient-filled "AI touched this" badge - deliberately distinct from the flat risk
+// chips above, since this marks model/agent output rather than a business-rule state.
+.ai-chip {
+  background: var(--sm-ai-grad) !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+// Per-mode badges for agent run provenance (ONLINE/OFFLINE/FALLBACK) - every agent run
+// records which path actually produced it (AiGatewayService's online->offline->deterministic
+// chain), and these three classes are how that becomes visible instead of buried in a log.
+.mode-online { background: var(--sm-ai-online-bg) !important; color: var(--sm-ai-online-fg) !important; }
+.mode-offline { background: var(--sm-ai-offline-bg) !important; color: var(--sm-ai-offline-fg) !important; }
+.mode-fallback { background: var(--sm-ai-fallback-bg) !important; color: var(--sm-ai-fallback-fg) !important; }
+
+// Reusable gradient text treatment for AI-branded headings (the toolbar wordmark, AI
+// Operations Center title) - keeps the gradient language consistent without repeating
+// the background-clip boilerplate at every call site.
+.ai-gradient-text {
+  background: var(--sm-ai-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}

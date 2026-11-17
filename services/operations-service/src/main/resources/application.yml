@@ -22,10 +22,6 @@ management:
       exposure:
         include: health,info
 
-operations:
-  cors:
-    allowed-origins: ${OPERATIONS_CORS_ORIGINS:http://localhost:4200}
-
 aiops:
   keycloak:
     jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8180/realms/supplymind/protocol/openid-connect/certs}

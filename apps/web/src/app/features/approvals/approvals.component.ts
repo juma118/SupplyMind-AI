@@ -7,8 +7,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AiOperationsApiService, Recommendation } from '../../core/api/ai-operations-api.service';
+import { InvestigationDetailDialogComponent } from '../ai-operations/investigation-detail-dialog.component';
 
 @Component({
   selector: 'app-approvals',
@@ -19,12 +22,14 @@ import { AiOperationsApiService, Recommendation } from '../../core/api/ai-operat
     MatCardModule,
     MatButtonModule,
     MatChipsModule,
+    MatDialogModule,
+    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
   ],
   template: `
-    <h2>Pending Approvals</h2>
+    <h2 class="ai-gradient-text">Pending Approvals</h2>
     <p class="hint">Every card here is a real AI-generated recommendation awaiting a human decision.</p>
 
     @if (loading()) {
@@ -37,10 +42,15 @@ import { AiOperationsApiService, Recommendation } from '../../core/api/ai-operat
           <mat-card>
             <mat-card-content>
               <div class="action-row">
-                <mat-chip>{{ rec.actionType }}</mat-chip>
+                <mat-chip class="ai-chip">{{ rec.actionType }}</mat-chip>
                 @if (rec.estimatedCost != null) {
                   <span class="cost">Est. cost: {{ '$' + rec.estimatedCost }}</span>
                 }
+                <span class="spacer"></span>
+                <button mat-button class="trace-link" (click)="openTrace(rec)">
+                  <mat-icon>smart_toy</mat-icon>
+                  View agent trace
+                </button>
               </div>
               <p class="summary">{{ rec.summary }}</p>
               @if (rec.actionType === 'TRANSFER') {
@@ -82,6 +92,8 @@ import { AiOperationsApiService, Recommendation } from '../../core/api/ai-operat
     .error { color: #b3261e; }
     .list { display: flex; flex-direction: column; gap: 1rem; max-width: 640px; }
     .action-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+    .spacer { flex: 1 1 auto; }
+    .trace-link { color: #6d28d9; font-size: 0.85rem; }
     .cost { color: rgba(0,0,0,0.6); font-size: 0.9rem; }
     .summary { margin: 0.25rem 0; }
     .action-detail { color: rgba(0,0,0,0.7); font-size: 0.9rem; }
@@ -99,10 +111,19 @@ export class ApprovalsComponent implements OnInit {
   constructor(
     private readonly api: AiOperationsApiService,
     private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
     this.load();
+  }
+
+  openTrace(rec: Recommendation): void {
+    this.dialog.open(InvestigationDetailDialogComponent, {
+      width: '640px',
+      maxHeight: '85vh',
+      data: { investigationId: rec.investigationId },
+    });
   }
 
   approve(rec: Recommendation): void {

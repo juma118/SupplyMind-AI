@@ -39,6 +39,34 @@ export interface AuditLogEntry {
   occurredAt: string;
 }
 
+export interface AgentRun {
+  id: string;
+  agentName: string;
+  status: string;
+  mode: string | null;
+  provider: string | null;
+  model: string | null;
+  output: string | null;
+  errorMessage: string | null;
+  startedAt: string;
+  finishedAt: string | null;
+}
+
+export interface Evidence {
+  id: string;
+  sourceType: string;
+  sourceId: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface InvestigationDetail {
+  investigation: Investigation;
+  agentRuns: AgentRun[];
+  evidence: Evidence[];
+  recommendations: Recommendation[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class AiOperationsApiService {
   private readonly baseUrl = `${environment.gatewayUrl}/ai-operations-service/api/v1`;
@@ -47,6 +75,10 @@ export class AiOperationsApiService {
 
   listInvestigations(): Observable<Investigation[]> {
     return this.http.get<Investigation[]>(`${this.baseUrl}/investigations`);
+  }
+
+  getInvestigationDetail(investigationId: string): Observable<InvestigationDetail> {
+    return this.http.get<InvestigationDetail>(`${this.baseUrl}/investigations/${investigationId}/timeline`);
   }
 
   getRecommendations(investigationId: string): Observable<Recommendation[]> {

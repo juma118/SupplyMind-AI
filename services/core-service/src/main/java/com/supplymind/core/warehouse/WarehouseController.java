@@ -2,6 +2,7 @@ package com.supplymind.core.warehouse;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,6 +29,7 @@ public class WarehouseController {
         return WarehouseDtos.WarehouseResponse.from(service.get(id));
     }
 
+    @PreAuthorize("hasRole('warehouse-manager') or hasRole('platform-admin')")
     @PostMapping
     public ResponseEntity<WarehouseDtos.WarehouseResponse> create(@Valid @RequestBody WarehouseDtos.CreateWarehouseRequest request) {
         Warehouse created = service.create(request);
